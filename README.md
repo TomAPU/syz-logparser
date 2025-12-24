@@ -20,10 +20,11 @@ Flags:
 - `-os` / `-arch` — target OS/arch of the log (default: current host).
 - `-config` — optional syz-manager config to reuse parsing settings.
 - `-json` — output parsed crashes as JSON.
+- `-all` — parse the entire log; by default only the first crash is extracted.
 
 Examples:
-- Human-readable output: `bin/syz-logparser /path/to/kernel.log`
-- JSON output: `bin/syz-logparser -json /path/to/kernel.log`
+- First crash only (human-readable): `bin/syz-logparser /path/to/kernel.log`
+- All crashes in JSON: `bin/syz-logparser -all -json /path/to/kernel.log`
 
 ## Status
 

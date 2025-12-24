@@ -24,6 +24,7 @@ var (
 	flagArch   = flag.String("arch", runtime.GOARCH, "target architecture of the log")
 	flagConfig = flag.String("config", "", "optional manager config to reuse parsing settings")
 	flagJSON   = flag.Bool("json", false, "emit parsed crashes as JSON")
+	flagAll    = flag.Bool("all", false, "parse all crash reports (default: only the first)")
 )
 
 type serializedReport struct {
@@ -65,7 +66,7 @@ func main() {
 	if err != nil {
 		tool.Failf("failed to read log file: %v", err)
 	}
-	reports := report.ParseAll(reporter, logData)
+	reports := parseReports(reporter, logData)
 	if len(reports) == 0 {
 		if *flagJSON {
 			fmt.Fprintln(os.Stdout, "[]")
@@ -82,6 +83,16 @@ func main() {
 		return
 	}
 	printHuman(reports)
+}
+
+func parseReports(reporter *report.Reporter, logData []byte) []*report.Report {
+	if *flagAll {
+		return report.ParseAll(reporter, logData)
+	}
+	if rep := reporter.Parse(logData); rep != nil {
+		return []*report.Report{rep}
+	}
+	return nil
 }
 
 func loadReporterConfig() (*mgrconfig.Config, error) {
